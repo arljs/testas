@@ -1,17 +1,25 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-	<title>ARLJS</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ping Pong Game</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #000;
+        }
+        canvas {
+            border: 2px solid white;
+        }
+    </style>
 </head>
-
 <body>
-<p>
-Sveiki visi atvyke i mano saita ir ziurekit kas
-cia idomaus vyksta. </br>
-siaip kol kas tai dar nieko idomaus nevyksta.
-</p>
-<img src="cat.jpg" alt="cat"/>
- <canvas id="gameCanvas" width="800" height="400"></canvas>
+    <canvas id="gameCanvas" width="800" height="400"></canvas>
 
     <script>
         const canvas = document.getElementById('gameCanvas');
@@ -149,5 +157,4 @@ siaip kol kas tai dar nieko idomaus nevyksta.
         updateGame();
     </script>
 </body>
-
 </html>

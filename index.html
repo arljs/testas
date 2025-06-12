@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Ping Pong Game</title>
+  <title>Ping Pong Game with Table</title>
   <style>
     body {
       margin: 0;
@@ -11,19 +11,32 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      height: 100vh;
       font-family: sans-serif;
       text-align: center;
     }
     #welcome {
-      margin-bottom: 20px;
+      margin: 20px 0;
       font-size: 24px;
     }
     canvas {
       background: #111;
       border: 2px solid #fff;
       touch-action: none;
+    }
+    table {
+      margin-top: 20px;
+      border-collapse: collapse;
+      width: 500px;
+    }
+    td {
+      border: 1px solid #fff;
+      padding: 10px;
+      vertical-align: middle;
+      text-align: center;
+    }
+    img {
+      max-width: 100%;
+      height: auto;
     }
   </style>
 </head>
@@ -32,6 +45,16 @@
   <div id="welcome">Welcome to my game, have fun!</div>
 
   <canvas id="gameCanvas" width="500" height="500"></canvas>
+
+  <table>
+    <tr>
+      <td>Life is full of surprises.</td>
+      <td rowspan="2"><img src="https://placekitten.com/300/300" alt="Cute Cat"></td>
+    </tr>
+    <tr>
+      <td>Sometimes you just need a nap.</td>
+    </tr>
+  </table>
 
   <script>
     const canvas = document.getElementById('gameCanvas');

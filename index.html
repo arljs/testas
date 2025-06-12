@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>ARLJS</title>
+  <title>Ping Pong Game with Score</title>
   <style>
     body {
       margin: 0;
@@ -17,18 +17,21 @@
   </style>
 </head>
 <body>
-  <canvas id="gameCanvas" width="480" height="320"></canvas>
+  <canvas id="gameCanvas" width="600" height="400"></canvas>
 
   <script>
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
 
     const paddleWidth = 10, paddleHeight = 80;
-    const ballSize = 10;
+    const ballSize = 8;
     let playerY = (canvas.height - paddleHeight) / 2;
     let aiY = (canvas.height - paddleHeight) / 2;
     let ballX = canvas.width / 2, ballY = canvas.height / 2;
-    let ballSpeedX = 4, ballSpeedY = 4;
+    let ballSpeedX = 5, ballSpeedY = 3;
+    let playerScore = 0, aiScore = 0;
+    const winningScore = 5;
+    let isGameOver = false;
 
     function drawRect(x, y, w, h, color) {
       ctx.fillStyle = color;
@@ -48,46 +51,80 @@
       }
     }
 
+    function drawText(text, x, y, size = "20px") {
+      ctx.fillStyle = '#fff';
+      ctx.font = `${size} monospace`;
+      ctx.fillText(text, x, y);
+    }
+
     function draw() {
       drawRect(0, 0, canvas.width, canvas.height, '#000');
       drawNet();
       drawRect(0, playerY, paddleWidth, paddleHeight, '#fff');
       drawRect(canvas.width - paddleWidth, aiY, paddleWidth, paddleHeight, '#fff');
       drawCircle(ballX, ballY, ballSize, '#fff');
+      drawText(playerScore, canvas.width / 4, 30);
+      drawText(aiScore, 3 * canvas.width / 4, 30);
+
+      if (isGameOver) {
+        drawText("GAME OVER", canvas.width / 2 - 80, canvas.height / 2 - 20, "24px");
+        drawText("Tap or Click to Restart", canvas.width / 2 - 110, canvas.height / 2 + 20, "16px");
+      }
     }
 
     function resetBall() {
+      if (playerScore >= winningScore || aiScore >= winningScore) {
+        isGameOver = true;
+      }
       ballX = canvas.width / 2;
       ballY = canvas.height / 2;
       ballSpeedX = -ballSpeedX;
-      ballSpeedY = 4 * (Math.random() > 0.5 ? 1 : -1);
+      ballSpeedY = 3 * (Math.random() > 0.5 ? 1 : -1);
     }
 
     function update() {
+      if (isGameOver) return;
+
       ballX += ballSpeedX;
       ballY += ballSpeedY;
 
       if (ballY < 0 || ballY > canvas.height) ballSpeedY = -ballSpeedY;
 
+      // Player paddle collision
       if (ballX < paddleWidth) {
         if (ballY > playerY && ballY < playerY + paddleHeight) {
           ballSpeedX = -ballSpeedX;
+          const deltaY = ballY - (playerY + paddleHeight / 2);
+          ballSpeedY = deltaY * 0.2;
         } else {
+          aiScore++;
           resetBall();
         }
       }
 
+      // AI paddle collision
       if (ballX > canvas.width - paddleWidth) {
         if (ballY > aiY && ballY < aiY + paddleHeight) {
           ballSpeedX = -ballSpeedX;
+          const deltaY = ballY - (aiY + paddleHeight / 2);
+          ballSpeedY = deltaY * 0.2;
         } else {
+          playerScore++;
           resetBall();
         }
       }
 
+      // AI movement (basic)
       const aiCenter = aiY + paddleHeight / 2;
       if (aiCenter < ballY - 35) aiY += 4;
       else if (aiCenter > ballY + 35) aiY -= 4;
+    }
+
+    function restartGame() {
+      playerScore = 0;
+      aiScore = 0;
+      isGameOver = false;
+      resetBall();
     }
 
     function gameLoop() {
@@ -103,6 +140,21 @@
       if (playerY < 0) playerY = 0;
       if (playerY > canvas.height - paddleHeight) playerY = canvas.height - paddleHeight;
       e.preventDefault();
+    });
+
+    canvas.addEventListener('mousemove', function (e) {
+      const rect = canvas.getBoundingClientRect();
+      playerY = e.clientY - rect.top - paddleHeight / 2;
+      if (playerY < 0) playerY = 0;
+      if (playerY > canvas.height - paddleHeight) playerY = canvas.height - paddleHeight;
+    });
+
+    canvas.addEventListener('click', function () {
+      if (isGameOver) restartGame();
+    });
+
+    canvas.addEventListener('touchstart', function () {
+      if (isGameOver) restartGame();
     });
 
     gameLoop();

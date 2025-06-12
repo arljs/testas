@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Ping Pong Game with Table</title>
+  <style>
+    body {
+      margin: 0;
+      background: #000;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-family: sans-serif;
+      text-align: center;
+    }
+    #welcome {
+      margin: 20px 0;
+      font-size: 24px;
+    }
+    canvas {
+      background: #111;
+      border: 2px solid #fff;
+      touch-action: none;
+    }
+    table {
+      margin-top: 20px;
+      border-collapse: collapse;
+      width: 500px;
+    }
+    td {
+      border: 1px solid #fff;
+      padding: 10px;
+      vertical-align: middle;
+      text-align: center;
+    }
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="welcome">Welcome to my game, have fun!</div>
+
+  <canvas id="gameCanvas" width="500" height="500"></canvas>
+
+  <table>
+    <tr>
+      <td>Life is full of surprises.</td>
+      <td rowspan="2"><img src="cat.jpg"></td>
+    </tr>
+    <tr>
+      <td>Sometimes you just need a nap.</td>
+    </tr>
+  </table>
+
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    const paddleWidth = 10, paddleHeight = 80;
+    const ballSize = 8;
+    let playerY = (canvas.height - paddleHeight) / 2;
+    let aiY = (canvas.height - paddleHeight) / 2;
+    let ballX = canvas.width / 2, ballY = canvas.height / 2;
+    let ballSpeedX = 5, ballSpeedY = 3;
+    let playerScore = 0, aiScore = 0;
+    const winningScore = 5;
+    let isGameOver = false;
+
+    function drawRect(x, y, w, h, color) {
+      ctx.fillStyle = color;
+      ctx.fillRect(x, y, w, h);
+    }
+
+    function drawCircle(x, y, r, color) {
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function drawNet() {
+      for (let i = 0; i < canvas.height; i += 20) {
+        drawRect(canvas.width / 2 - 1, i, 2, 12, '#555');
+      }
+    }
+
+    function drawText(text, x, y, size = "20px") {
+      ctx.fillStyle = '#fff';
+      ctx.font = `${size} monospace`;
+      ctx.fillText(text, x, y);
+    }
+
+    function draw() {
+      drawRect(0, 0, canvas.width, canvas.height, '#000');
+      drawNet();
+      drawRect(0, playerY, paddleWidth, paddleHeight, '#fff');
+      drawRect(canvas.width - paddleWidth, aiY, paddleWidth, paddleHeight, '#fff');
+      drawCircle(ballX, ballY, ballSize, '#fff');
+      drawText(playerScore, canvas.width / 4, 30);
+      drawText(aiScore, 3 * canvas.width / 4, 30);
+
+      if (isGameOver) {
+        drawText("GAME OVER", canvas.width / 2 - 90, canvas.height / 2 - 20, "24px");
+        drawText("Click or Tap to Restart", canvas.width / 2 - 140, canvas.height / 2 + 20, "16px");
+      }
+    }
+
+    function resetBall() {
+      if (playerScore >= winningScore || aiScore >= winningScore) {
+        isGameOver = true;
+      }
+      ballX = canvas.width / 2;
+      ballY = canvas.height / 2;
+      ballSpeedX = -ballSpeedX;
+      ballSpeedY = 3 * (Math.random() > 0.5 ? 1 : -1);
+    }
+
+    function update() {
+      if (isGameOver) return;
+
+      ballX += ballSpeedX;
+      ballY += ballSpeedY;
+
+      if (ballY < 0 || ballY > canvas.height) ballSpeedY = -ballSpeedY;
+
+      if (ballX < paddleWidth) {
+        if (ballY > playerY && ballY < playerY + paddleHeight) {
+          ballSpeedX = -ballSpeedX;
+          const deltaY = ballY - (playerY + paddleHeight / 2);
+          ballSpeedY = deltaY * 0.2;
+        } else {
+          aiScore++;
+          resetBall();
+        }
+      }
+
+      if (ballX > canvas.width - paddleWidth) {
+        if (ballY > aiY && ballY < aiY + paddleHeight) {
+          ballSpeedX = -ballSpeedX;
+          const deltaY = ballY - (aiY + paddleHeight / 2);
+          ballSpeedY = deltaY * 0.2;
+        } else {
+          playerScore++;
+          resetBall();
+        }
+      }
+
+      const aiCenter = aiY + paddleHeight / 2;
+      if (aiCenter < ballY - 35) aiY += 4;
+      else if (aiCenter > ballY + 35) aiY -= 4;
+    }
+
+    function restartGame() {
+      playerScore = 0;
+      aiScore = 0;
+      isGameOver = false;
+      resetBall();
+    }
+
+    function gameLoop() {
+      update();
+      draw();
+      requestAnimationFrame(gameLoop);
+    }
+
+    canvas.addEventListener('mousemove', function (e) {
+      const rect = canvas.getBoundingClientRect();
+      const mouseY = e.clientY - rect.top;
+      playerY = mouseY - paddleHeight / 2;
+      playerY = Math.max(0, Math.min(canvas.height - paddleHeight, playerY));
+    });
+
+    canvas.addEventListener('touchmove', function (e) {
+      const touch = e.touches[0];
+      const rect = canvas.getBoundingClientRect();
+      const touchY = touch.clientY - rect.top;
+      playerY = touchY - paddleHeight / 2;
+      playerY = Math.max(0, Math.min(canvas.height - paddleHeight, playerY));
+      e.preventDefault();
+    }, { passive: false });
+
+    canvas.addEventListener('click', function () {
+      if (isGameOver) restartGame();
+    });
+    canvas.addEventListener('touchstart', function () {
+      if (isGameOver) restartGame();
+    });
+
+    gameLoop();
+  </script>
+
+</body>
+</html>

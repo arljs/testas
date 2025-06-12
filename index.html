@@ -2,14 +2,17 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>1</title>
+  <title>2</title>
 </head>
 <body>
 
   <div id="welcome">Welcome to my game, have fun!</div>
   <div style="float:right;"id="cat"><img src="cat.jpg"></div>
 
+  
+<div style="float:center;">
   <canvas id="gameCanvas" width="500" height="500"></canvas>
+</div>
 
   <table>
     <tr>
@@ -20,7 +23,6 @@
     </tr>
   </table>
   
-<div style="float:center;">
   <script>
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
@@ -156,7 +158,7 @@
     });
 
     gameLoop();
-  </script></div>
+  </script>
   
 
 </body>

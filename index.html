@@ -2,26 +2,37 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>2</title>
+  <title>Ping Pong Game</title>
   <style>
     body {
       margin: 0;
-      background: #2e4053;
+      background: #000;
+      color: #fff;
       display: flex;
-      
+      flex-direction: column;
+      align-items: center;
       justify-content: center;
       height: 100vh;
+      font-family: sans-serif;
+      text-align: center;
+    }
+    #welcome {
+      margin-bottom: 20px;
+      font-size: 24px;
     }
     canvas {
       background: #111;
-      touch-action: none;
       border: 2px solid #fff;
+      touch-action: none;
     }
   </style>
 </head>
 <body>
 
+  <div id="welcome">Welcome to my game, have fun!</div>
+
   <canvas id="gameCanvas" width="500" height="500"></canvas>
+
   <script>
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
@@ -137,8 +148,7 @@
       const rect = canvas.getBoundingClientRect();
       const mouseY = e.clientY - rect.top;
       playerY = mouseY - paddleHeight / 2;
-      if (playerY < 0) playerY = 0;
-      if (playerY > canvas.height - paddleHeight) playerY = canvas.height - paddleHeight;
+      playerY = Math.max(0, Math.min(canvas.height - paddleHeight, playerY));
     });
 
     canvas.addEventListener('touchmove', function (e) {
@@ -146,8 +156,7 @@
       const rect = canvas.getBoundingClientRect();
       const touchY = touch.clientY - rect.top;
       playerY = touchY - paddleHeight / 2;
-      if (playerY < 0) playerY = 0;
-      if (playerY > canvas.height - paddleHeight) playerY = canvas.height - paddleHeight;
+      playerY = Math.max(0, Math.min(canvas.height - paddleHeight, playerY));
       e.preventDefault();
     }, { passive: false });
 
@@ -161,11 +170,5 @@
     gameLoop();
   </script>
 
-      <div style="float:right;">
-      <p>
-        <img src="cat.jpg"/>
-      </p>
-      </div>
-      
 </body>
 </html>

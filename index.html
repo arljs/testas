@@ -1,1 +1,153 @@
-<!DOCTYPE html><html><head>	<title>ARLJS</title></head><body><p>Sveiki visi atvyke i mano saita ir ziurekit kascia idomaus vyksta. </br>siaip kol kas tai dar nieko idomaus nevyksta.</p><img src="cat.jpg" alt="cat"/></body></html>
+<!DOCTYPE html>
+<html>
+<head>
+	<title>ARLJS</title>
+</head>
+
+<body>
+<p>
+Sveiki visi atvyke i mano saita ir ziurekit kas
+cia idomaus vyksta. </br>
+siaip kol kas tai dar nieko idomaus nevyksta.
+</p>
+<img src="cat.jpg" alt="cat"/>
+ <canvas id="gameCanvas" width="800" height="400"></canvas>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Ball and paddle properties
+        const ball = {
+            x: canvas.width / 2,
+            y: canvas.height / 2,
+            radius: 10,
+            dx: 4,
+            dy: 4,
+            speed: 4
+        };
+
+        const paddleWidth = 10, paddleHeight = 100;
+        const playerPaddle = {
+            x: 0,
+            y: canvas.height / 2 - paddleHeight / 2,
+            width: paddleWidth,
+            height: paddleHeight,
+            dy: 0
+        };
+
+        const computerPaddle = {
+            x: canvas.width - paddleWidth,
+            y: canvas.height / 2 - paddleHeight / 2,
+            width: paddleWidth,
+            height: paddleHeight
+        };
+
+        let upArrowPressed = false;
+        let downArrowPressed = false;
+
+        // Keypress Event Listeners
+        document.addEventListener('keydown', (e) => {
+            if (e.key === "ArrowUp") upArrowPressed = true;
+            if (e.key === "ArrowDown") downArrowPressed = true;
+        });
+
+        document.addEventListener('keyup', (e) => {
+            if (e.key === "ArrowUp") upArrowPressed = false;
+            if (e.key === "ArrowDown") downArrowPressed = false;
+        });
+
+        // Update the game state
+        function updateGame() {
+            moveBall();
+            movePaddles();
+            checkCollisions();
+            draw();
+            requestAnimationFrame(updateGame);
+        }
+
+        // Draw all elements
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw the ball
+            ctx.beginPath();
+            ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+            ctx.fillStyle = "white";
+            ctx.fill();
+            ctx.closePath();
+
+            // Draw player paddle
+            ctx.fillStyle = "white";
+            ctx.fillRect(playerPaddle.x, playerPaddle.y, playerPaddle.width, playerPaddle.height);
+
+            // Draw computer paddle
+            ctx.fillRect(computerPaddle.x, computerPaddle.y, computerPaddle.width, computerPaddle.height);
+        }
+
+        // Move the ball
+        function moveBall() {
+            ball.x += ball.dx;
+            ball.y += ball.dy;
+
+            // Ball collision with top and bottom walls
+            if (ball.y - ball.radius < 0 || ball.y + ball.radius > canvas.height) {
+                ball.dy = -ball.dy;
+            }
+
+            // Ball collision with paddles
+            if (
+                ball.x - ball.radius < playerPaddle.x + playerPaddle.width &&
+                ball.y > playerPaddle.y && ball.y < playerPaddle.y + playerPaddle.height
+            ) {
+                ball.dx = -ball.dx;
+            }
+
+            if (
+                ball.x + ball.radius > computerPaddle.x &&
+                ball.y > computerPaddle.y && ball.y < computerPaddle.y + computerPaddle.height
+            ) {
+                ball.dx = -ball.dx;
+            }
+
+            // Ball out of bounds (left side or right side)
+            if (ball.x - ball.radius < 0 || ball.x + ball.radius > canvas.width) {
+                resetBall();
+            }
+        }
+
+        // Move paddles
+        function movePaddles() {
+            if (upArrowPressed && playerPaddle.y > 0) {
+                playerPaddle.y -= 8;
+            }
+            if (downArrowPressed && playerPaddle.y + playerPaddle.height < canvas.height) {
+                playerPaddle.y += 8;
+            }
+
+            // Computer AI to move paddle
+            if (ball.y < computerPaddle.y + computerPaddle.height / 2) {
+                computerPaddle.y -= 4;
+            } else if (ball.y > computerPaddle.y + computerPaddle.height / 2) {
+                computerPaddle.y += 4;
+            }
+        }
+
+        // Reset the ball to the center after scoring
+        function resetBall() {
+            ball.x = canvas.width / 2;
+            ball.y = canvas.height / 2;
+            ball.dx = -ball.dx;
+        }
+
+        // Collision with paddles or walls
+        function checkCollisions() {
+            // Add collision logic if needed
+        }
+
+        // Start the game
+        updateGame();
+    </script>
+</body>
+
+</html>

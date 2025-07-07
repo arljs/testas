@@ -1,41 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+  <meta charset="UTF-8">
   <title>ARLJS</title>
   <style>
-   body {
+    body {
       margin: 0;
+      height: 100vh;
       background: #5d6d7e;
       color: #fff;
       display: flex;
-      flex-direction: row-reverse;
+      justify-content: center;
       align-items: center;
       font-family: sans-serif;
       text-align: center;
     }
-    </style>
+
+    #container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    canvas {
+      border: 2px solid white;
+    }
+  </style>
 </head>
 <body>
 
+  <div id="container">
     <div id="welcome">Welcome to my game, have fun!</div>
-  
-  <div style="float:none;"id="cat"><img src="cat.jpg"></div>
 
-  
-<div style="float:none;">
-  <canvas id="gameCanvas" width="500" height="500"></canvas>
-</div>
+    <div id="cat">
+      <img src="cat.jpg" alt="cat">
+    </div>
 
-  <div style="float:none;">
+    <canvas id="gameCanvas" width="500" height="500"></canvas>
+
     <table>
-    <tr>
-      <td>Life is full of surprises.</td>
-    </tr>
-    <tr>
-      <td>Sometimes you just need a nap.</td>
-    </tr>
-  </table>
+      <tr>
+        <td>Life is full of surprises.</td>
+      </tr>
+      <tr>
+        <td>Sometimes you just need a nap.</td>
+      </tr>
+    </table>
   </div>
   
   <script>
